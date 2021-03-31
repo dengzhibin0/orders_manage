@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+    <!-- 开启注解扫描，管理service和dao -->
+    <context:component-scan base-package="com.dzb.ssm.service">
+    </context:component-scan>
+    <context:component-scan base-package="com.dzb.ssm.dao">
+    </context:component-scan>
+
+    <!--读取db.properties-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!--配置数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--数据库驱动 -->
+        <property name="driverClass" value="${jdbc.driver}" />
+        <!--连接数据库的ur1 -->
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        <!--连接数据库的用户名 -->
+        <property name="user" value="${jdbc.username}" />
+        <!--连接数据库的密码-->
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <!--配置MyBatis工厂 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据源 -->
+        <property name="dataSource" ref="dataSource" />
+        <!--指定核心配置文件位置 -->
+        <property name="configLocation" value="classpath:mybatis.xml" />
+        <!-- 传入PageHelper的插件 -->
+        <property name="plugins">
+            <array>
+                <!-- 传入插件的对象 -->
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <props>
+                            <prop key="helperDialect">mysql</prop>
+                            <prop key="reasonable">true</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- 扫描mapper，我这里放在dao包中了 -->
+    <bean id="mapperCcanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dzb.ssm.dao"/>
+    </bean>
+
+    <!--事务管理器，依赖于数据源 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 通知 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 传播行为 -->
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="create*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 切面 -->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.dzb.ssm.service.*.*(..))" />
+    </aop:config>
+
+</beans>
