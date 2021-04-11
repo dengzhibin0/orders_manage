@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,11 +36,11 @@ public class ProductController {
 
     //查询全部产品
     @RequestMapping("/findAll.do")
-    public ModelAndView findAll(@RequestParam(name="page",required = true,defaultValue = "1") int page,
-                                @RequestParam(name = "size",required = true,defaultValue = "4") int size) throws Exception {
+    @RolesAllowed("admin")
+    public ModelAndView findAll(@RequestParam(name="page",required = true,defaultValue = "1") Integer page,
+                                @RequestParam(name = "size",required = true,defaultValue = "4") Integer size) throws Exception {
         ModelAndView mv=new ModelAndView();
         List<Product> ps =productService.findAll(page,size);
-        System.out.println(ps);
 
         PageInfo pageInfo=new PageInfo(ps);
         mv.addObject("pageInfo",pageInfo);

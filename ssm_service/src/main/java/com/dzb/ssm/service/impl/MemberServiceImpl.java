@@ -5,6 +5,8 @@ import com.dzb.ssm.domain.Member;
 import com.dzb.ssm.service.IMemberService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ import java.util.List;
  * @version 1.0
  * @date 2021/3/28 11:03
  */
+@Service("memberService")
+@Transactional
 public class MemberServiceImpl implements IMemberService {
     @Autowired
     private IMemberDao memberDao;

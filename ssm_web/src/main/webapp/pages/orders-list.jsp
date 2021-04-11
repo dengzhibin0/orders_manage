@@ -1,23 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8" isELIgnored="false" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 
 <head>
-<!-- 页面meta -->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-
-
-
-<title>数据 - AdminLTE2定制版</title>
-<meta name="description" content="AdminLTE2定制版">
-<meta name="keywords" content="AdminLTE2定制版">
-
-
-
+<title>订单列表</title>
+<meta name="description" content="订单列表">
+<meta name="keywords" content="订单列表">
 
 <!-- Tell the browser to be responsive to screen width -->
 <meta
@@ -54,13 +45,6 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-
-
-
-
-
-
-
 
 <!-- jQuery 2.2.3 -->
 <!-- jQuery UI 1.11.4 -->
@@ -186,10 +170,8 @@
 					</div>
 
 					<div class="box-body">
-
 						<!-- 数据表格 -->
 						<div class="table-box">
-
 							<!--工具栏-->
 							<div class="pull-left">
 								<div class="form-group form-inline">
@@ -303,52 +285,45 @@
 								</div>
 							</div>
 							<!--工具栏/-->
-
 						</div>
 						<!-- 数据表格 /-->
-
-
 					</div>
 					<!-- /.box-body -->
 
 					<!-- .box-footer-->
-                <div class="box-footer">
-                    <div class="pull-left">
-                        <div class="form-group form-inline">
-                            总共2 页，共14 条数据。 每页
-                            <select class="form-control">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                            </select> 条
-                        </div>
-                    </div>
+					<div class="box-footer">
+						<div class="pull-left">
+							<div class="form-group form-inline">
+								总共 ${pageInfo.pages} 页， ${pageInfo.total} 条数据。 每页
+								<select class="form-control" id="changePageSize" onchange="changePageSize()">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+									<option>4</option>
+									<option>5</option>
+								</select> 条
+							</div>
+						</div>
 
-                    <div class="box-tools pull-right">
-                        <ul class="pagination">
-                            <li>
-                                <a href="#" aria-label="Previous">首页</a>
-                            </li>
-                            <li><a href="#">上一页</a></li>
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                            <li><a href="#">下一页</a></li>
-                            <li>
-                                <a href="#" aria-label="Next">尾页</a>
-                            </li>
-                        </ul>
-                    </div>
+						<div class="box-tools pull-right">
+							<ul class="pagination">
+								<li>
+									<a href="${pageContext.request.contextPath}/orders/findAll.do?page=1&size=${pageInfo.pageSize}" aria-label="Previous">首页</a>
+								</li>
+								<li><a href="${pageContext.request.contextPath}/orders/findAll.do?page=${pageInfo.pageNum-1}&size=${pageInfo.pageSize}">上一页</a></li>
+								<c:forEach begin="1" end="${pageInfo.pages}" var="pageNum">
+									<li><a href="${pageContext.request.contextPath}/orders/findAll.do?page=${pageNum}&size=${pageInfo.pageSize}">${pageNum}</a></li>
+								</c:forEach>
+								<li><a href="${pageContext.request.contextPath}/orders/findAll.do?page=${pageInfo.pageNum+1}&size=${pageInfo.pageSize}">下一页</a></li>
+								<li>
+									<a href="${pageContext.request.contextPath}/orders/findAll.do?page=${pageInfo.pages}&size=${pageInfo.pageSize}" aria-label="Next">尾页</a>
+								</li>
 
-                </div>
-                <!-- /.box-footer-->
+							</ul>
+						</div>
 
-
-
+					</div>
+					<!-- /.box-footer-->
 				</div>
 
 			</section>
@@ -465,7 +440,7 @@
 			var pageSize = $("#changePageSize").val();
 
 			//向服务器发送请求，改变没页显示条数
-			location.href = "${pageContext.request.contextPath}/orders/findAll.do?page=1&pageSize="
+			location.href = "${pageContext.request.contextPath}/orders/findAll.do?page=1&size="
 					+ pageSize;
 		}
 		$(document).ready(function() {

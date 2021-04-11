@@ -4,6 +4,7 @@ import com.dzb.ssm.domain.Orders;
 import com.dzb.ssm.service.IOrdersService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,8 +35,9 @@ public class OrdersController {
 //    }
 
     @RequestMapping("/findAll.do")
-    public ModelAndView findAll(@RequestParam(name = "page", required = true, defaultValue = "1") int page,
-                                @RequestParam(name = "size", required = true, defaultValue = "4") int size) throws Exception {
+    @Secured("ROLE_admin")
+    public ModelAndView findAll(@RequestParam(name = "page", required = true, defaultValue = "1") Integer page,
+                                @RequestParam(name = "size", required = true, defaultValue = "4") Integer size) throws Exception {
         ModelAndView mv = new ModelAndView();
         List<Orders> ordersList = ordersService.findAll(page, size);
 
@@ -47,7 +49,7 @@ public class OrdersController {
     }
 
     @RequestMapping("/findById.do")
-    public ModelAndView findById(@RequestParam(name = "id",required = true) int ordersId) throws Exception {
+    public ModelAndView findById(@RequestParam(name = "id",required = true) Integer ordersId) throws Exception {
         System.out.println(ordersId);
         ModelAndView mv = new ModelAndView();
         Orders orders = ordersService.findById(ordersId);
